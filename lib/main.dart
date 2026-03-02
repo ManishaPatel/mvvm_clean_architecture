@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mvvm_clean_architecture/presentation/controllers/internet_controller.dart';
 import 'package:mvvm_clean_architecture/presentation/pages/dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/routes/routes.dart';
+import 'core/routes/routes_name.dart';
 import 'presentation/pages/login_page.dart';
 
 void main() async {
@@ -11,6 +13,8 @@ void main() async {
   // Initialize SharedPreferences
   final prefs = await SharedPreferences.getInstance();
   Get.put(prefs);
+  InternetController internetController = Get.put(InternetController());
+  Get.put(internetController);
 
   runApp(const MyApp());
 }
@@ -42,7 +46,7 @@ class MyApp extends StatelessWidget {
           filled: true,
         ),
       ),
-      initialRoute: '/',
+      initialRoute: RoutesName.splashScreen,
       getPages: AppRoutes.appRoutes(),
       home: FutureBuilder<bool>(
         future: SharedPreferences.getInstance().then((prefs) => prefs.getBool('isLoggedIn') ?? false),

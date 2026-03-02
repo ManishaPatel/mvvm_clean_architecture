@@ -10,6 +10,8 @@ class Constant {
   static const login = "Login";
   static var spIsLogin = 'islogin';
   static var isLogin = false.obs;
+  static var spAuthKey = 'auth_Key';
+
 
 
 

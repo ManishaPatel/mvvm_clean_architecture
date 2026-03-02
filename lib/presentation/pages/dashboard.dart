@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../core/app_color.dart';
 import '../../core/constants.dart';
 import '../../core/logger.dart';
@@ -29,11 +30,13 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      statusBarBrightness: Brightness.dark,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+    );
     final prefs = Get.find<SharedPreferences>();
     // await prefs.setBool('isLoggedIn', false);
     // prefs.getBool(Constant.spIsLogin)?.then((value) {
@@ -42,7 +45,6 @@ class _DashboardState extends State<Dashboard> {
     //     Constant.isLogin.value = value;
     //   });
     // });
-
   }
 
   void _onItemTapped(String key) {
@@ -52,13 +54,19 @@ class _DashboardState extends State<Dashboard> {
 
     switch (key) {
       case 'home':
-        Get.rootDelegate.toNamed("${RoutesName.dashboard}${RoutesName.dashboardHome}");
+        Get.rootDelegate.toNamed(
+          "${RoutesName.dashboard}${RoutesName.dashboardHome}",
+        );
         break;
       case 'employees':
-        Get.rootDelegate.toNamed("${RoutesName.dashboard}${RoutesName.dashboardEmployee}");
+        Get.rootDelegate.toNamed(
+          "${RoutesName.dashboard}${RoutesName.dashboardEmployee}",
+        );
         break;
       case 'departments':
-        Get.rootDelegate.toNamed("${RoutesName.dashboard}${RoutesName.dashboardDepartment}");
+        Get.rootDelegate.toNamed(
+          "${RoutesName.dashboard}${RoutesName.dashboardDepartment}",
+        );
         break;
     }
     // 2. Update state after navigation
@@ -109,36 +117,39 @@ class _DashboardState extends State<Dashboard> {
             // drawer: const CustomDrawer(),
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(
-                  internetController.isInternetViewVisible.value ? 170 : 140),
-              child: Obx(() => Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  internetController.isInternetViewVisible.value
-                      ? Utils().internetNotAvailableView(
-                      false, internetController)
-                      : const SizedBox.shrink(),
-                  SafeArea(
-                      bottom: false,
-                      top: true,
-                      child: appBar(isMobile ? 40 : 24)),
-                ],
-              )),
+                internetController.isInternetViewVisible.value ? 170 : 140,
+              ),
+              child: Obx(
+                () => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    internetController.isInternetViewVisible.value
+                        ? Utils().internetNotAvailableView(
+                            false,
+                            internetController,
+                          )
+                        : const SizedBox.shrink(),
+                    // SafeArea(
+                    //   bottom: false,
+                    //   top: true,
+                    //   // child: appBar(isMobile ? 40 : 24),
+                    // ),
+                  ],
+                ),
+              ),
             ),
             body: isLargeScreen
                 ? Row(
-              children: [
-                _buildNavigationRail(),
-                Expanded(
-                  child: _buildRouterOutlet(),
-                ),
-              ],
-            )
+                    children: [
+                      _buildNavigationRail(),
+                      Expanded(child: _buildRouterOutlet()),
+                    ],
+                  )
                 : _buildRouterOutlet(),
-            floatingActionButton: _buildFloatingActionButton(),
-            floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerDocked,
+            // floatingActionButton: _buildFloatingActionButton(),
+            // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
             bottomNavigationBar: !isLargeScreen ? _buildBottomAppBar() : null,
           );
         },
@@ -150,9 +161,10 @@ class _DashboardState extends State<Dashboard> {
     return Container(
       // This Container provides the background image covering the whole screen
       decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: ExactAssetImage("assets/images/signup.png"),
-          fit: BoxFit.cover,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.blue, Colors.purple],
         ),
       ),
       child: Container(
@@ -183,47 +195,52 @@ class _DashboardState extends State<Dashboard> {
 
   Widget _buildFloatingActionButton() {
     // Only displayed on narrow screens since bottomNavigationBar is only for narrow screens
-    return Builder(builder: (context) {
-      return Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppColor.roundStart, AppColor.roundEnd],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+    return Builder(
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColor.roundStart, AppColor.roundEnd],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(35),
           ),
-          borderRadius: BorderRadius.circular(35),
-        ),
-        child: FloatingActionButton(
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              useRootNavigator: true,
-              backgroundColor: Colors.transparent,
-              builder: (context) {
-                return DraggableScrollableSheet(
-                  initialChildSize: 0.75,
-                  minChildSize: 0.75,
-                  maxChildSize: 0.95,
-                  expand: true,
-                  builder: (_, scrollController) => Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(16)),
+          child: FloatingActionButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                useRootNavigator: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return DraggableScrollableSheet(
+                    initialChildSize: 0.75,
+                    minChildSize: 0.75,
+                    maxChildSize: 0.95,
+                    expand: true,
+                    builder: (_, scrollController) => Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(16),
+                        ),
+                      ),
+                      // child: FilterBottomSheet(),
                     ),
-                    // child: FilterBottomSheet(),
-                  ),
-                );
-              },
-            );
-          },
-          backgroundColor: Colors.transparent,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
-          child: const Icon(Icons.filter_alt, color: Colors.white),
-        ),
-      );
-    });
+                  );
+                },
+              );
+            },
+            backgroundColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(35),
+            ),
+            child: const Icon(Icons.filter_alt, color: Colors.white),
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildBottomAppBar() {
@@ -236,11 +253,9 @@ class _DashboardState extends State<Dashboard> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           // FIX: Restoring the missing bottom navigation items
-          buildNavItem('assets/images/home.svg', 'home'.tr, 'home'),
-          buildNavItem('assets/images/games.svg', 'events'.tr, 'events'),
-          const SizedBox(width: 40),
-          buildNavItem('assets/images/ticket.svg', 'my_tickets'.tr, 'myTickets'),
-          buildNavItem('assets/images/winner.svg', 'winners'.tr, 'winners'),
+          buildNavItem('assets/images/home.svg', 'home', 'home'),
+          buildNavItem('assets/images/home.svg', 'employee', 'employee'),
+          buildNavItem('assets/images/home.svg', 'department', 'department'),
         ],
       ),
     );
@@ -250,144 +265,143 @@ class _DashboardState extends State<Dashboard> {
     int selectedIndex = _getSelectedIndex();
     return Theme(
       // override ink/splash/hover for this subtree only
-        data: Theme.of(context).copyWith(
-          splashFactory: NoSplash.splashFactory,
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          hoverColor: Colors.transparent,
+      data: Theme.of(context).copyWith(
+        splashFactory: NoSplash.splashFactory,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: NavigationRail(
+          backgroundColor: Colors.black,
+          indicatorColor: Colors.transparent,
+          useIndicator: false,
+          elevation: 5,
+          selectedIconTheme: const IconThemeData(color: Colors.white),
+          unselectedIconTheme: IconThemeData(color: AppColor.menuUnselected),
+          labelType: NavigationRailLabelType.all,
+          selectedIndex: selectedIndex,
+          onDestinationSelected: (index) {
+            _onItemTapped(_getKeyFromIndex(index));
+          },
+          destinations: [
+            NavigationRailDestination(
+              icon: Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: SvgPicture.asset(
+                  'assets/images/home.svg',
+                  height: 24,
+                  width: 24,
+                  colorFilter: ColorFilter.mode(
+                    AppColor.menuUnselected,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+              selectedIcon: Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: SvgPicture.asset(
+                  'assets/images/home.svg',
+                  height: 24,
+                  width: 24,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+              label: Text(
+                'home'.tr,
+                style: TextStyle(
+                  color: _getSelectedIndex() == 0
+                      ? Colors.white
+                      : Colors.white24,
+                ),
+              ),
+            ),
+            NavigationRailDestination(
+              icon: Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: SvgPicture.asset(
+                  'assets/images/home.svg',
+                  height: 24,
+                  width: 24,
+                  colorFilter: ColorFilter.mode(
+                    AppColor.menuUnselected,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+              selectedIcon: Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: SvgPicture.asset(
+                  'assets/images/home.svg',
+                  height: 24,
+                  width: 24,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+              label: Text(
+                'employee',
+                style: TextStyle(
+                  color: _getSelectedIndex() == 1
+                      ? Colors.white
+                      : Colors.white24,
+                ),
+              ),
+            ),
+            NavigationRailDestination(
+              icon: Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: SvgPicture.asset(
+                  'assets/images/home.svg',
+                  height: 24,
+                  width: 24,
+                  colorFilter: ColorFilter.mode(
+                    AppColor.menuUnselected,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+              selectedIcon: Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: SvgPicture.asset(
+                  'assets/images/home.svg',
+                  height: 24,
+                  width: 24,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+              label: Text(
+                'department',
+                style: TextStyle(
+                  color: _getSelectedIndex() == 2
+                      ? Colors.white
+                      : Colors.white24,
+                ),
+              ),
+            ),
+          ],
         ),
-        child: Material(
-          type: MaterialType.transparency,
-          child: NavigationRail(
-            backgroundColor: Colors.black,
-            indicatorColor: Colors.transparent,
-            useIndicator: false,
-            elevation: 5,
-            selectedIconTheme: const IconThemeData(color: Colors.white),
-            unselectedIconTheme: IconThemeData(color: AppColor.menuUnselected),
-            labelType: NavigationRailLabelType.all,
-            selectedIndex: selectedIndex,
-            onDestinationSelected: (index) {
-              _onItemTapped(_getKeyFromIndex(index));
-            },
-            destinations: [
-              NavigationRailDestination(
-                icon: Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: SvgPicture.asset('assets/images/home.svg',
-                      height: 24,
-                      width: 24,
-                      colorFilter: ColorFilter.mode(AppColor.menuUnselected, BlendMode.srcIn)),
-                ),
-                selectedIcon: Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: SvgPicture.asset('assets/images/home.svg',
-                      height: 24,
-                      width: 24,
-                      colorFilter:
-                      const ColorFilter.mode(Colors.white, BlendMode.srcIn)),
-                ),
-                label: Text('home'.tr,
-                  style: TextStyle(
-                    color: _getSelectedIndex() == 0
-                        ? Colors.white
-                        : Colors.white24,
-                  ),
-                ),
-              ),
-              NavigationRailDestination(
-                icon: Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: SvgPicture.asset('assets/images/games.svg',
-                      height: 24,
-                      width: 24,
-                      colorFilter: ColorFilter.mode(
-                          AppColor.menuUnselected, BlendMode.srcIn)),
-                ),
-                selectedIcon: Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: SvgPicture.asset('assets/images/games.svg',
-                      height: 24,
-                      width: 24,
-                      colorFilter:
-                      const ColorFilter.mode(Colors.white, BlendMode.srcIn)),
-                ),
-                label: Text(
-                  'events'.tr,
-                  style: TextStyle(
-                    color: _getSelectedIndex() == 1
-                        ? Colors.white
-                        : Colors.white24,
-                  ),
-                ),
-              ),
-              NavigationRailDestination(
-                icon: Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: SvgPicture.asset('assets/images/ticket.svg',
-                      height: 24,
-                      width: 24,
-                      colorFilter: ColorFilter.mode(
-                          AppColor.menuUnselected, BlendMode.srcIn)),
-                ),
-                selectedIcon: Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: SvgPicture.asset('assets/images/ticket.svg',
-                      height: 24,
-                      width: 24,
-                      colorFilter:
-                      const ColorFilter.mode(Colors.white, BlendMode.srcIn)),
-                ),
-                label: Text(
-                  'my_tickets'.tr,
-                  style: TextStyle(
-                    color: _getSelectedIndex() == 2
-                        ? Colors.white
-                        : Colors.white24,
-                  ),
-                ),
-              ),
-              NavigationRailDestination(
-                icon: Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: SvgPicture.asset('assets/images/winner.svg',
-                      height: 24,
-                      width: 24,
-                      colorFilter: ColorFilter.mode(
-                          AppColor.menuUnselected, BlendMode.srcIn)),
-                ),
-                selectedIcon: Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: SvgPicture.asset('assets/images/winner.svg',
-                      height: 24,
-                      width: 24,
-                      colorFilter:
-                      const ColorFilter.mode(Colors.white, BlendMode.srcIn)),
-                ),
-                label: Text(
-                  'winners'.tr,
-                  style: TextStyle(
-                    color: _getSelectedIndex() == 3
-                        ? Colors.white
-                        : Colors.white24,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ));
+      ),
+    );
   }
 
   int _getSelectedIndex() {
     switch (_selectedKey) {
       case 'home':
         return 0;
-      case 'events':
+      case 'employee':
         return 1;
-      case 'myTickets':
+      case 'department':
         return 2;
-      case 'winners':
-        return 3;
       default:
         return 0;
     }
@@ -398,11 +412,9 @@ class _DashboardState extends State<Dashboard> {
       case 0:
         return 'home';
       case 1:
-        return 'events';
+        return 'employee';
       case 2:
-        return 'myTickets';
-      case 3:
-        return 'winners';
+        return 'department';
       default:
         return 'home';
     }
@@ -434,12 +446,13 @@ class _DashboardState extends State<Dashboard> {
                 child: Text(
                   label,
                   style: TextStyle(
-                      height: 1.5,
-                      color: _selectedKey == key
-                          ? Colors.white
-                          : AppColor.menuUnselected,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 10),
+                    height: 1.5,
+                    color: _selectedKey == key
+                        ? Colors.white
+                        : AppColor.menuUnselected,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 10,
+                  ),
                 ),
               ),
             ],
@@ -481,10 +494,11 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
       title: Center(
-          child: Text(
-            getAppBarTitle(_selectedKey),
-            style: TextStyles.appBarTitle(context),
-          )),
+        child: Text(
+          getAppBarTitle(_selectedKey),
+          style: TextStyles.appBarTitle(context),
+        ),
+      ),
       actions: [
         ClipOval(
           child: Material(
@@ -498,11 +512,7 @@ class _DashboardState extends State<Dashboard> {
               },
               child: const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.shopping_cart,
-                  size: 24,
-                  color: Colors.white,
-                ),
+                child: Icon(Icons.shopping_cart, size: 24, color: Colors.white),
               ),
             ),
           ),
@@ -519,11 +529,7 @@ class _DashboardState extends State<Dashboard> {
               },
               child: const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.notifications,
-                  size: 24,
-                  color: Colors.white,
-                ),
+                child: Icon(Icons.notifications, size: 24, color: Colors.white),
               ),
             ),
           ),
